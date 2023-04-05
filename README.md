@@ -20,6 +20,14 @@ sudo python3 app.py
 ### Get the IP of the database and export it as DBHOST variable
 ```docker inspect <container_id>```
 
+### Install package manager and dependencies after loggin into the ec2 instance
+``` $ sudo yum update -y
+
+$ sudo yum install docker -y
+
+$ sudo systemctl start docker
+
+$ sudo systemctl status docker```
 
 ### Example when running DB runs as a docker container and app is running locally
 ```
