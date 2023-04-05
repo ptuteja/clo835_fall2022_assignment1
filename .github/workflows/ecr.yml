@@ -25,7 +25,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
         AWS_REGION: us-east-1
-    - name: Building the web app and pushing the image to Amazon ECR
+    - name: Building to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: web-repo
@@ -38,7 +38,7 @@ jobs:
         docker ps
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
-    - name: Building the sql image and pushing the image to Amazon ECR
+    - name: Building to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: mysql-repo
