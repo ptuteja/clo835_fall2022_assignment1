@@ -71,3 +71,87 @@ resource "aws_key_pair" "my_key" {
   public_key = file("${local.name_prefix}.pub")
 }
 
+# Security Group
+resource "aws_security_group" "my_sg" {
+  name        = "allow_my_port"
+  description = "Allow SSH inbound traffic"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    description      = "SSH from everywhere"
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+  # Opening ports for application to access 
+  ingress {
+    description = "Port For application"
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Port For application"
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Port For application"
+    from_port   = 8083
+    to_port     = 8083
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${local.name_prefix}-sg"
+    }
+  )
+}
+
+
+
+# Elastic IP
+resource "aws_eip" "static_eip" {
+  instance = aws_instance.my_amazon.id
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${local.name_prefix}-eip"
+    }
+  )
+}
+# Creating ecr repositories
+resource "aws_ecr_repository" "app" {
+  name                 = "web-repo"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_repository" "sql" {
+  name                 = "mysql-repo"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
